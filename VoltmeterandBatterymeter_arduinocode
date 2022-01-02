@@ -1,0 +1,86 @@
+// Voltmeter + Battery Meter
+// To be connected to SCL = A5 pin, SDA = A4 pin
+// I measured up to 20 volts
+// resistors 100k, 10k
+// There is a 10k resistor between gnd and A0, we enter A0 with 100k.
+// gnd---10k-----A0-----100k--->
+//  |-------------------------->
+//
+#include <LCD.h>
+#include <LiquidCrystal_I2C.h>
+LiquidCrystal_I2C lcd(0x3F, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
+// voltmetre değişkenleri
+int analogInput = 0;    // analog 0 pini giriş 
+float vout = 0.0;
+float vin = 0.0;
+float R1 = 100000.0; // 100Kohm direnç
+float R2 = 10000.0; // 10Kohm direnç
+int value2 = 0;
+
+// pil ölçer değişkenleri
+/*
+ Bu sinyalin dijital sinyale çevrilmesi için Arduino'da 10 bitlik bir saklayıcı bulunmaktadır.
+ Bu saklayıcı 0 volt giriş için 0, 5 volt giriş için ise 1023 değerini almaktadır.
+ Bu artış doğrusaldır yani girişteki 0,005 voltluk bir değişim saklayıcının değerini bir artırmaktadır.
+ Örneğin sinyal girişimiz 3,3 volt ise okuyacağımız değer yaklaşık olarak 675'tir.
+ Kısacası ADC, 0 ve 5 volt arasındaki sinyali oranlayarak 0 ve 1023 arasında sayısal bir değer döndürmektedir.
+ */
+//  5/1024=0,0048...volt  (yaklaşık)
+// 338 max - 1.65 V     
+// 246 min - 1.2 V
+int min_value = 514;
+float percentage = 0;
+float value = 0;
+int voltage = 0;
+
+void setup(){
+  Serial.begin(9600);
+  lcd.begin(16, 2);
+    lcd.setBacklightPin(3,POSITIVE);
+  lcd.setBacklight(HIGH);
+   pinMode(analogInput, INPUT);
+}
+void loop(){
+  voltmeter();
+  battery_meter();
+}
+
+void voltmeter()
+{
+   value2= analogRead(analogInput);
+   vout = (value2 * 5.0) / 1024.0;
+   vin = vout / (R2/(R1+R2));
+   if (vin<0.09) {
+   vin=0.0;
+}
+lcd.setCursor(0, 0);
+lcd.print("volt: ");
+lcd.print(vin);
+delay(500);
+  }
+
+  void battery_meter()
+  {
+    //okunan değer 1.65 volttan yüksek ise doluluk hesaplanmayacak
+    if (vin>5.0){ 
+      lcd.setCursor(0,1);
+      lcd.print("               ");
+   }
+   else
+   {
+      voltage = analogRead(analogInput)*12;    // 12 sayısını denemelerle elde ettim
+   //Serial.println(gerilim);   //seri port ekranından çıktı takibi için 
+  if(voltage >= 758)
+    voltage = 758;
+  if(voltage <= 514)
+    voltage = 514;
+   percentage = voltage - min_value;
+   value = ((100.00/244.00) * percentage);
+   lcd.setCursor(0,1);
+   lcd.print("Charge: %");
+   lcd.print(value);
+ 
+   }
+   delay(500);
+    }
+  
