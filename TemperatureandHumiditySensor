@@ -1,0 +1,31 @@
+ #include <LCD.h> //I added the library needed for the LCD screen to work
+#include <LiquidCrystal_I2C.h> //I added the library needed for the I2C module
+#include <dht11.h> //library required for temperature and humidity sensor
+LiquidCrystal_I2C  lcd(0x27,2,1,0,4,5,6,7);
+dht11 DHT11;
+#define DHT11PIN 2 // Digital pin connected to the DHT sensor
+
+void setup()
+{
+  lcd.begin (16,2);
+  lcd.setBacklightPin(3,POSITIVE);
+  lcd.setBacklight(HIGH);
+  Serial.begin(9600);
+}
+void loop()
+{
+  delay(1000);
+  int chk = DHT11.read(DHT11PIN);
+  lcd.home ();
+  lcd.print("Humidity: %");
+  lcd.print((float)DHT11.humidity, 2); //Prints the measured humidity value in percentage to the LCD screen
+  lcd.setCursor (0,1);
+  lcd.print("Temp: "); 
+  lcd.print((float)DHT11.temperature, 2); //Prints the measured temperature value in celcius to the LCD screen
+  lcd.print(" C");
+
+  Serial.print("Temperature");
+  Serial.println((float)DHT11.temperature, 2);
+  Serial.print("Humidity");
+  Serial.println((float)DHT11.humidity, 2);
+ }
