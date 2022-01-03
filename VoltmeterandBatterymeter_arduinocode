@@ -13,12 +13,12 @@ Mehmet Emre Basar  151220202084
 #include <LCD.h>
 #include <LiquidCrystal_I2C.h>
 LiquidCrystal_I2C lcd(0x3F, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
-// voltmetre değişkenleri
-int analogInput = 0;    // analog 0 pini giriş 
+// voltmeter variables
+int analogInput = 0;    // analog 0 pin input 
 float vout = 0.0;
 float vin = 0.0;
-float R1 = 100000.0; // 100Kohm direnç
-float R2 = 10000.0; // 10Kohm direnç
+float R1 = 100000.0; // 100Kohm resistor
+float R2 = 10000.0; // 10Kohm resistor
 int value2 = 0;
 
 // battery meter variables
