@@ -17,18 +17,17 @@ float R1 = 100000.0; // 100Kohm direnç
 float R2 = 10000.0; // 10Kohm direnç
 int value2 = 0;
 
-// pil ölçer değişkenleri
+// battery meter variables
 /*
- Bu sinyalin dijital sinyale çevrilmesi için Arduino'da 10 bitlik bir saklayıcı bulunmaktadır.
- Bu saklayıcı 0 volt giriş için 0, 5 volt giriş için ise 1023 değerini almaktadır.
- Bu artış doğrusaldır yani girişteki 0,005 voltluk bir değişim saklayıcının değerini bir artırmaktadır.
- Örneğin sinyal girişimiz 3,3 volt ise okuyacağımız değer yaklaşık olarak 675'tir.
- Kısacası ADC, 0 ve 5 volt arasındaki sinyali oranlayarak 0 ve 1023 arasında sayısal bir değer döndürmektedir.
+ There is a 10-bit register in Arduino to convert this signal into a digital signal.
+ This register takes the value 0.5 for 0 volt input and 1023 for 5 volt input.
+ This increase is linear, that is, a change of 0.005 volts at the input increases the value of the register by one.
+ For example, if our signal input is 3.3 volts, the value we will read is approximately 675.
+ In short, the ADC returns a numerical value between 0 and 1023 by proportioning the signal between 0 and 5 volts.
  */
-//  5/1024=0,0048...volt  (yaklaşık)
-// 338 max - 1.65 V     
-// 246 min - 1.2 V
-int min_value = 514;
+//  5/1024=0,0048...volt 
+// 758 max - 3.7 V     
+// 514 min - 2.5 V
 float percentage = 0;
 float value = 0;
 int voltage = 0;
@@ -61,16 +60,15 @@ delay(500);
 
   void battery_meter()
   {
-    //okunan değer 1.65 volttan yüksek ise doluluk hesaplanmayacak
+    // If the reading is higher than 5 volts, the occupancy will not be calculated
     if (vin>5.0){ 
       lcd.setCursor(0,1);
       lcd.print("               ");
    }
    else
    {
-      voltage = analogRead(analogInput)*12;    // 12 sayısını denemelerle elde ettim
-   //Serial.println(gerilim);   //seri port ekranından çıktı takibi için 
-  if(voltage >= 758)
+      voltage = analogRead(analogInput)*12;    // I got the number 12 by trying
+   //Serial.println(gerilim);   //for output monitoring from the serial port screen
     voltage = 758;
   if(voltage <= 514)
     voltage = 514;
