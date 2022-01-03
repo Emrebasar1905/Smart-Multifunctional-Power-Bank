@@ -1,3 +1,6 @@
+/*Osmangazi University
+Mehmet Emre Basar  151220202084
+*/
 // Voltmeter + Battery Meter
 // To be connected to SCL = A5 pin, SDA = A4 pin
 // I measured up to 20 volts
